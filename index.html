@@ -1,1 +1,292 @@
-hello
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sukh — Coming Soon</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:      #F7F3EE;
+      --bg-surface:   #FDFCFA;
+      --accent:       #2D8653;
+      --brand:        #2E4057;
+      --text-primary: #1A1A1A;
+      --text-secondary: #4A4A4A;
+      --text-tertiary: #8A8A8A;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+
+    /* ── Background canvas ── */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    /* Soft gradient orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+    }
+    .orb-1 {
+      width: 60vw; height: 60vw;
+      background: radial-gradient(circle, #2D8653, transparent 70%);
+      top: -15vw; left: -10vw;
+      animation: drift1 18s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      width: 50vw; height: 50vw;
+      background: radial-gradient(circle, #2E4057, transparent 70%);
+      bottom: -10vw; right: -5vw;
+      animation: drift2 22s ease-in-out infinite alternate;
+    }
+    .orb-3 {
+      width: 35vw; height: 35vw;
+      background: radial-gradient(circle, #a8d5b5, transparent 70%);
+      top: 40%; left: 55%;
+      animation: drift3 26s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift1 { from { transform: translate(0, 0) scale(1); } to { transform: translate(4vw, 6vw) scale(1.08); } }
+    @keyframes drift2 { from { transform: translate(0, 0) scale(1); } to { transform: translate(-5vw, -4vw) scale(1.06); } }
+    @keyframes drift3 { from { transform: translate(0, 0) scale(1); } to { transform: translate(-3vw, 5vw) scale(0.94); } }
+
+    /* Floating particles */
+    .particles {
+      position: absolute;
+      inset: 0;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0;
+      animation: floatUp var(--dur) ease-in-out var(--delay) infinite;
+    }
+    @keyframes floatUp {
+      0%   { opacity: 0;    transform: translateY(0)     scale(0.6); }
+      20%  { opacity: 0.12; }
+      80%  { opacity: 0.08; }
+      100% { opacity: 0;    transform: translateY(-30vh) scale(1); }
+    }
+
+    /* Gentle wave line */
+    .wave-svg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      opacity: 0.07;
+    }
+    .wave-path {
+      animation: waveShift 12s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+    @keyframes waveShift {
+      0%, 100% { d: path("M0,60 C200,20 400,100 600,60 C800,20 1000,100 1200,60 L1200,200 L0,200 Z"); }
+      50%       { d: path("M0,80 C200,40 400,120 600,80 C800,40 1000,120 1200,80 L1200,200 L0,200 Z"); }
+    }
+
+    /* ── Page layout ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px 60px;
+      text-align: center;
+    }
+
+    /* ── Logo ── */
+    .logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 40px;
+      animation: fadeDown 0.9s ease both;
+    }
+
+    .logo-svg {
+      width: 200px;
+      height: auto; /* aspect ratio: 236.525 / 33.512 ≈ 7.06 → ~28px tall */
+    }
+    .logo-version-badge {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(45,134,83,0.1);
+      border: 1px solid rgba(45,134,83,0.2);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    /* ── Headline ── */
+    .headline {
+      font-size: clamp(26px, 5vw, 40px);
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--brand);
+      max-width: 520px;
+      animation: fadeDown 0.9s 0.15s ease both;
+    }
+    .headline em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .subtext {
+      margin-top: 16px;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 420px;
+      animation: fadeDown 0.9s 0.28s ease both;
+    }
+
+    /* ── Pill badges ── */
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 32px;
+      animation: fadeDown 0.9s 0.4s ease both;
+    }
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--bg-surface);
+      border: 1px solid rgba(45,134,83,0.18);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* ── Footer note ── */
+    .footer-note {
+      margin-top: 80px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-tertiary);
+      animation: fadeDown 0.9s 0.64s ease both;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Mobile tweaks ── */
+    @media (max-width: 480px) {
+      .logo-svg { width: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Animated background ── -->
+<div class="bg-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="particles" id="particles"></div>
+
+  <svg class="wave-svg" viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path class="wave-path" fill="#2D8653"
+      d="M0,60 C200,20 400,100 600,60 C800,20 1000,100 1200,60 L1200,200 L0,200 Z"/>
+  </svg>
+</div>
+
+<!-- ── Page content ── -->
+<main class="page">
+
+  <div class="logo-wrap">
+    <!-- Sukh wordmark — exact same SVG used in the dashboards -->
+    <svg
+      class="logo-svg"
+      viewBox="82.005 97.15 236.525 33.512"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="Sukh"
+    >
+      <path
+        fill-rule="evenodd"
+        fill="#2E4057"
+        d="M91.875 97.204c-2.527.448-3.177.618-4.31 1.132-3.185 1.444-4.752 3.95-4.752 7.597 0 4.966 1.379 6.565 8.838 10.241 6.287 3.098 7.424 4.309 7.405 7.889-.021 3.916-2.217 6.041-6.243 6.041-4.234 0-6.025-2.176-6.476-7.868l-.145-1.827-.752.125c-2.284.382-3.435 1.629-3.435 3.723 0 8.007 17.43 8.738 21.027.881 2.578-5.63.09-10.321-7.135-13.455-6.64-2.88-8.306-4.419-8.555-7.905-.271-3.784 1.777-6.133 5.368-6.158 3.279-.022 4.678 1.786 5.111 6.608l.146 1.623.965-.133c5.641-.78 4.666-6.543-1.374-8.117-1.224-.319-4.736-.564-5.683-.397m51.875.504c0 .115.445.211.99.213 3.212.015 3.148-.245 3.237 13.329.08 12.371.108 12.682 1.325 14.76 3.393 5.791 16.37 6.302 20.163.794 1.67-2.424 1.659-2.328 1.731-15.346.078-13.926-.025-13.524 3.439-13.537.659-.002 1.198-.098 1.198-.213 0-.133-1.77-.208-4.895-.208-3.125 0-4.896.075-4.896.208 0 .117.576.211 1.302.213 1.855.007 2.973.55 3.281 1.594.443 1.502.181 23.476-.295 24.756-2.524 6.785-13.279 8.018-15.68 1.798-.461-1.194-.708-25.077-.274-26.554.284-.97 1.433-1.587 2.968-1.594.544-.002.989-.098.989-.213 0-.135-2.569-.208-7.291-.208-4.723 0-7.292.073-7.292.208m71.042 0c0 .115.42.209.933.209 1.417 0 2.6.554 2.945 1.379.459 1.099.424 28.38-.038 29.272-.404.781-1.413 1.224-2.792 1.224-.577 0-1.048.093-1.048.208 0 .135 2.569.208 7.291.208 4.723 0 7.292-.073 7.292-.208 0-.115-.492-.208-1.094-.209-2.908-.001-3.067-.395-3.063-7.603l.004-5.834.996-1.122.996-1.123 2.146 3.414c1.18 1.878 2.955 4.718 3.945 6.31 3.073 4.946 4.071 5.699 8.173 6.171 3.215.369 6.106.168 4.255-.297-.749-.188-1.9-1.268-3.131-2.936-1.05-1.424-11.117-16.673-11.204-16.972-.061-.211 7.007-7.97 8.722-9.574 1.487-1.392 2.526-1.964 3.995-2.202 2.115-.342.583-.523-4.427-.523-5.141 0-6.78.209-3.932.501 4.811.493 4.495 1.255-4.732 11.412l-5.711 6.288-.056-7.903c-.067-9.655-.001-9.862 3.128-9.877.545-.002.99-.098.99-.213 0-.135-2.569-.208-7.292-.208-4.722 0-7.291.073-7.291.208m69.583 0c0 .115.42.209.933.209 1.418 0 2.6.554 2.945 1.379.426 1.018.427 28.095.002 29.112-.364.87-1.409 1.384-2.818 1.384-.584 0-1.062.093-1.062.208 0 .135 2.569.208 7.292.208 4.722 0 7.291-.073 7.291-.208 0-.115-.478-.208-1.062-.208-3.024 0-3.104-.238-3.104-9.157v-7.302h13.153l-.066 7.354c-.081 8.919-.148 9.105-3.289 9.105-.577 0-1.048.093-1.048.208 0 .135 2.604.208 7.396.208 6.669 0 9.654-.224 6.043-.454-3.119-.199-2.999.439-2.999-15.9 0-16.337-.131-15.635 2.967-15.883 3.292-.265.605-.471-6.128-.471-6.684 0-9.248.202-5.941.467 2.885.232 3.037.681 3.037 9.022v5.928h-13.125l.003-6.511c.003-7.972.098-8.245 2.911-8.449 3.36-.243.532-.457-6.039-.457-4.723 0-7.292.073-7.292.208"
+      />
+    </svg>
+    <span class="logo-version-badge">2.0</span>
+  </div>
+
+  <h1 class="headline">
+    Something you love<br>is getting <em>even better.</em>
+  </h1>
+  <p class="subtext">
+    Sukh has always been about you — your healing, your pace, your story. We've been listening, and now we're rebuilding from the heart. A quieter, warmer, more thoughtful Sukh is on its way.
+  </p>
+
+  <div class="badges">
+    <span class="badge"><span class="badge-dot"></span>Qualified therapists</span>
+    <span class="badge"><span class="badge-dot"></span>Secure &amp; private</span>
+    <span class="badge"><span class="badge-dot"></span>India-first</span>
+    <span class="badge"><span class="badge-dot"></span>WhatsApp reminders</span>
+  </div>
+
+  <p class="footer-note">Sukh 2.0 &mdash; Coming Soon</p>
+</main>
+
+<script>
+  // Generate floating particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 3 + Math.random() * 5;
+    p.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${Math.random() * 100}%;
+      bottom: ${Math.random() * 30}%;
+      --dur: ${8 + Math.random() * 14}s;
+      --delay: ${Math.random() * 10}s;
+    `;
+    container.appendChild(p);
+  }
+
+
+</script>
+</body>
+</html>
